@@ -1,0 +1,1373 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title><h1>Micro-empresas, pequeñas y medianas empresas </h1></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/AccesoaInternetDensidaddemedianasempresas_1.js"></script>
+        <script src="data/AccesoaInternetDensidaddepequeasempresas_2.js"></script>
+        <script src="data/AccesoaInternetDensidaddemicroempresas_3.js"></script>
+        <script src="data/Distanciaaunalocalidadde50milhabitantes_4.js"></script>
+        <script src="data/Localidadesconmsde50milhabitantes_5.js"></script>
+        <script src="data/Limiteestatal_6.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        })
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+        }
+        map.createPane('pane_Voyagernolabelsretina_0');
+        map.getPane('pane_Voyagernolabelsretina_0').style.zIndex = 400;
+        var layer_Voyagernolabelsretina_0 = L.tileLayer('https://a.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}@2x.png', {
+            pane: 'pane_Voyagernolabelsretina_0',
+            opacity: 1.0,
+            attribution: '<a href="https://cartodb.com/basemaps/">Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL.</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_Voyagernolabelsretina_0;
+        map.addLayer(layer_Voyagernolabelsretina_0);
+        function pop_AccesoaInternetDensidaddemedianasempresas_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Clave Geográfica de AGEB</strong><br />' + (feature.properties['CVEGEO'] !== null ? autolinker.link(feature.properties['CVEGEO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Población x AGEB</strong><br />' + (feature.properties['POB1'] !== null ? autolinker.link(feature.properties['POB1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 0 a 5 personas</strong><br />' + (feature.properties['total5'] !== null ? autolinker.link(feature.properties['total5'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 6 a 10 personas</strong><br />' + (feature.properties['total10'] !== null ? autolinker.link(feature.properties['total10'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 11 a 30 personas</strong><br />' + (feature.properties['total30'] !== null ? autolinker.link(feature.properties['total30'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 31 a 50 personas</strong><br />' + (feature.properties['total50'] !== null ? autolinker.link(feature.properties['total50'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 51 a 100 personas</strong><br />' + (feature.properties['total100'] !== null ? autolinker.link(feature.properties['total100'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 101 a 250 personas</strong><br />' + (feature.properties['total250'] !== null ? autolinker.link(feature.properties['total250'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean más de 251 personas</strong><br />' + (feature.properties['total251'] !== null ? autolinker.link(feature.properties['total251'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Población x Localidad</strong><br />' + (feature.properties['pobtot'] !== null ? autolinker.link(feature.properties['pobtot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Viviendas que disponen de PC, laptop o table (%)</strong><br />' + (feature.properties['VIV34_R'] !== null ? autolinker.link(feature.properties['VIV34_R'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Viviendas que disponen de Internet (%)</strong><br />' + (feature.properties['VIV37_R'] !== null ? autolinker.link(feature.properties['VIV37_R'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Viviendas sin TIC (%)</strong><br />' + (feature.properties['VIV41_R'] !== null ? autolinker.link(feature.properties['VIV41_R'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Número total de empresas</strong><br />' + (feature.properties['total_empresas'] !== null ? autolinker.link(feature.properties['total_empresas'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Quintil de accesibilidad de internet</strong><br />' + (feature.properties['Qviv37_rbis'] !== null ? autolinker.link(feature.properties['Qviv37_rbis'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Densidad de medianas empresas</strong><br />' + (feature.properties['Densidad_Medianas'] !== null ? autolinker.link(feature.properties['Densidad_Medianas'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_AccesoaInternetDensidaddemedianasempresas_1_0(feature) {
+            switch(String(feature.properties['q2wHide_Class_Quintil_Med'])) {
+                case '1':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '1A':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(221,49,39,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2A':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(228,72,50,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3A':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(234,96,61,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4A':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(240,120,72,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5A':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(246,144,83,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '1B':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,168,94,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2B':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,184,108,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3B':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,197,123,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4B':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,210,138,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5B':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,223,154,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '1C':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,236,169,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2C':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,249,184,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3C':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(249,253,189,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4C':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(235,247,185,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5C':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(222,242,180,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '1D':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(208,236,176,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2D':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(195,231,172,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3D':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(181,225,167,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4D':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(166,218,165,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5D':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(145,203,169,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '1E':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(125,189,172,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2E':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(104,174,176,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3E':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(84,160,179,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4E':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(63,145,183,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5E':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,131,186,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_AccesoaInternetDensidaddemedianasempresas_1');
+        map.getPane('pane_AccesoaInternetDensidaddemedianasempresas_1').style.zIndex = 401;
+        map.getPane('pane_AccesoaInternetDensidaddemedianasempresas_1').style['mix-blend-mode'] = 'normal';
+        var layer_AccesoaInternetDensidaddemedianasempresas_1 = new L.geoJson(json_AccesoaInternetDensidaddemedianasempresas_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_AccesoaInternetDensidaddemedianasempresas_1',
+            layerName: 'layer_AccesoaInternetDensidaddemedianasempresas_1',
+            pane: 'pane_AccesoaInternetDensidaddemedianasempresas_1',
+            onEachFeature: pop_AccesoaInternetDensidaddemedianasempresas_1,
+            style: style_AccesoaInternetDensidaddemedianasempresas_1_0,
+        });
+        bounds_group.addLayer(layer_AccesoaInternetDensidaddemedianasempresas_1);
+        map.addLayer(layer_AccesoaInternetDensidaddemedianasempresas_1);
+        function pop_AccesoaInternetDensidaddepequeasempresas_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Clave Geográfica de AGEB</strong><br />' + (feature.properties['CVEGEO'] !== null ? autolinker.link(feature.properties['CVEGEO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Población x AGEB</strong><br />' + (feature.properties['POB1'] !== null ? autolinker.link(feature.properties['POB1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 0 a 5 personas</strong><br />' + (feature.properties['total5'] !== null ? autolinker.link(feature.properties['total5'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 6 a 10 personas</strong><br />' + (feature.properties['total10'] !== null ? autolinker.link(feature.properties['total10'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 11 a 30 personas</strong><br />' + (feature.properties['total30'] !== null ? autolinker.link(feature.properties['total30'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 31 a 50 personas</strong><br />' + (feature.properties['total50'] !== null ? autolinker.link(feature.properties['total50'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 51 a 100 personas</strong><br />' + (feature.properties['total100'] !== null ? autolinker.link(feature.properties['total100'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 101 a 250 personas</strong><br />' + (feature.properties['total250'] !== null ? autolinker.link(feature.properties['total250'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean más de 251 personas</strong><br />' + (feature.properties['total251'] !== null ? autolinker.link(feature.properties['total251'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Población x Localidad</strong><br />' + (feature.properties['pobtot'] !== null ? autolinker.link(feature.properties['pobtot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Viviendas que disponen de PC, laptop o tablet (%)</strong><br />' + (feature.properties['VIV34_R'] !== null ? autolinker.link(feature.properties['VIV34_R'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Viviendas que disponen de Internet (%)</strong><br />' + (feature.properties['VIV37_R'] !== null ? autolinker.link(feature.properties['VIV37_R'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Viviendas sin TIC (%)</strong><br />' + (feature.properties['VIV41_R'] !== null ? autolinker.link(feature.properties['VIV41_R'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Número total de empresas</strong><br />' + (feature.properties['total_empresas'] !== null ? autolinker.link(feature.properties['total_empresas'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Quintil de accesibilidad a internet</strong><br />' + (feature.properties['Qviv37_rbis'] !== null ? autolinker.link(feature.properties['Qviv37_rbis'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Densidad_Micro'] !== null ? autolinker.link(feature.properties['Densidad_Micro'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_AccesoaInternetDensidaddepequeasempresas_2_0(feature) {
+            switch(String(feature.properties['q2wHide_Class_Quintil_Peq'])) {
+                case '1':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '1A':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(221,49,39,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2A':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(228,72,50,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3A':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(234,96,61,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4A':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(240,120,72,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5A':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(246,144,83,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '1B':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,168,94,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2B':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,184,108,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3B':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,197,123,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4B':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,210,138,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5B':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,223,154,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '1C':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,236,169,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2C':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,249,184,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3C':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(249,253,189,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4C':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(235,247,185,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5C':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(222,242,180,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '1D':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(208,236,176,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2D':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(195,231,172,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3D':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(181,225,167,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4D':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(166,218,165,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5D':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(145,203,169,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '1E':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(125,189,172,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2E':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(104,174,176,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3E':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(84,160,179,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4E':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(63,145,183,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5E':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,131,186,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_AccesoaInternetDensidaddepequeasempresas_2');
+        map.getPane('pane_AccesoaInternetDensidaddepequeasempresas_2').style.zIndex = 402;
+        map.getPane('pane_AccesoaInternetDensidaddepequeasempresas_2').style['mix-blend-mode'] = 'normal';
+        var layer_AccesoaInternetDensidaddepequeasempresas_2 = new L.geoJson(json_AccesoaInternetDensidaddepequeasempresas_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_AccesoaInternetDensidaddepequeasempresas_2',
+            layerName: 'layer_AccesoaInternetDensidaddepequeasempresas_2',
+            pane: 'pane_AccesoaInternetDensidaddepequeasempresas_2',
+            onEachFeature: pop_AccesoaInternetDensidaddepequeasempresas_2,
+            style: style_AccesoaInternetDensidaddepequeasempresas_2_0,
+        });
+        bounds_group.addLayer(layer_AccesoaInternetDensidaddepequeasempresas_2);
+        map.addLayer(layer_AccesoaInternetDensidaddepequeasempresas_2);
+        function pop_AccesoaInternetDensidaddemicroempresas_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Clave Geográfica de AGEB</strong><br />' + (feature.properties['CVEGEO'] !== null ? autolinker.link(feature.properties['CVEGEO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Población x AGEB</strong><br />' + (feature.properties['POB1'] !== null ? autolinker.link(feature.properties['POB1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 0 a 5 personas</strong><br />' + (feature.properties['total5'] !== null ? autolinker.link(feature.properties['total5'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 6 a 10 personas</strong><br />' + (feature.properties['total10'] !== null ? autolinker.link(feature.properties['total10'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 11 a 30 personas</strong><br />' + (feature.properties['total30'] !== null ? autolinker.link(feature.properties['total30'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 31 a 50 personas</strong><br />' + (feature.properties['total50'] !== null ? autolinker.link(feature.properties['total50'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 51 a 100 personas</strong><br />' + (feature.properties['total100'] !== null ? autolinker.link(feature.properties['total100'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean de 101 a 250 personas</strong><br />' + (feature.properties['total250'] !== null ? autolinker.link(feature.properties['total250'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Empresas x AGEB que emplean más de 251 personas</strong><br />' + (feature.properties['total251'] !== null ? autolinker.link(feature.properties['total251'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Población x Localidad</strong><br />' + (feature.properties['pobtot'] !== null ? autolinker.link(feature.properties['pobtot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Viviendas que disponen de PC, laptop o tablet (%)</strong><br />' + (feature.properties['VIV34_R'] !== null ? autolinker.link(feature.properties['VIV34_R'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Viviendas que disponen de Internet (%)</strong><br />' + (feature.properties['VIV37_R'] !== null ? autolinker.link(feature.properties['VIV37_R'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Porcentaje de viviendas sin TIC (%)</strong><br />' + (feature.properties['VIV41_R'] !== null ? autolinker.link(feature.properties['VIV41_R'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Número total de empresas</strong><br />' + (feature.properties['total_empresas'] !== null ? autolinker.link(feature.properties['total_empresas'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Quintil de accesibilidad a internet</strong><br />' + (feature.properties['Qviv37_rbis'] !== null ? autolinker.link(feature.properties['Qviv37_rbis'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Densidad de microempresas</strong><br />' + (feature.properties['Densidad_Micro'] !== null ? autolinker.link(feature.properties['Densidad_Micro'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_AccesoaInternetDensidaddemicroempresas_3_0(feature) {
+            switch(String(feature.properties['q2wHide_Class_Quintil_Micro'])) {
+                case '1':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '1A':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(221,49,39,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2A':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(228,72,50,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3A':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(234,96,61,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4A':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(240,120,72,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5A':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(246,144,83,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '1B':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,168,94,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2B':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,184,108,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3B':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,197,123,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4B':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,210,138,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5B':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,223,154,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '1C':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,236,169,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2C':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,249,184,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3C':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(249,253,189,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4C':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(235,247,185,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5C':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(222,242,180,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '1D':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(208,236,176,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2D':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(195,231,172,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3D':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(181,225,167,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4D':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(166,218,165,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5D':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(145,203,169,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '1E':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(125,189,172,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2E':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(104,174,176,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3E':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(84,160,179,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4E':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(63,145,183,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5E':
+                    return {
+                pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,131,186,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_AccesoaInternetDensidaddemicroempresas_3');
+        map.getPane('pane_AccesoaInternetDensidaddemicroempresas_3').style.zIndex = 403;
+        map.getPane('pane_AccesoaInternetDensidaddemicroempresas_3').style['mix-blend-mode'] = 'normal';
+        var layer_AccesoaInternetDensidaddemicroempresas_3 = new L.geoJson(json_AccesoaInternetDensidaddemicroempresas_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_AccesoaInternetDensidaddemicroempresas_3',
+            layerName: 'layer_AccesoaInternetDensidaddemicroempresas_3',
+            pane: 'pane_AccesoaInternetDensidaddemicroempresas_3',
+            onEachFeature: pop_AccesoaInternetDensidaddemicroempresas_3,
+            style: style_AccesoaInternetDensidaddemicroempresas_3_0,
+        });
+        bounds_group.addLayer(layer_AccesoaInternetDensidaddemicroempresas_3);
+        map.addLayer(layer_AccesoaInternetDensidaddemicroempresas_3);
+        function pop_Distanciaaunalocalidadde50milhabitantes_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Clave Geográfica de AGEB</strong><br />' + (feature.properties['CVEGEO'] !== null ? autolinker.link(feature.properties['CVEGEO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Distancia a una localidad de 50 mil habitantes o más (metros)</strong><br />' + (feature.properties['HubDist'] !== null ? autolinker.link(feature.properties['HubDist'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Distanciaaunalocalidadde50milhabitantes_4_0(feature) {
+            if (feature.properties['HubDist'] >= 15.609226 && feature.properties['HubDist'] <= 3067.111547 ) {
+                return {
+                pane: 'pane_Distanciaaunalocalidadde50milhabitantes_4',
+                radius: 3.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,231,37,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['HubDist'] >= 3067.111547 && feature.properties['HubDist'] <= 5892.906531 ) {
+                return {
+                pane: 'pane_Distanciaaunalocalidadde50milhabitantes_4',
+                radius: 3.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(93,201,98,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['HubDist'] >= 5892.906531 && feature.properties['HubDist'] <= 13703.758248 ) {
+                return {
+                pane: 'pane_Distanciaaunalocalidadde50milhabitantes_4',
+                radius: 3.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(32,144,141,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['HubDist'] >= 13703.758248 && feature.properties['HubDist'] <= 40457.291716 ) {
+                return {
+                pane: 'pane_Distanciaaunalocalidadde50milhabitantes_4',
+                radius: 3.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(58,82,139,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['HubDist'] >= 40457.291716 && feature.properties['HubDist'] <= 396267.454019 ) {
+                return {
+                pane: 'pane_Distanciaaunalocalidadde50milhabitantes_4',
+                radius: 3.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(68,1,84,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_Distanciaaunalocalidadde50milhabitantes_4');
+        map.getPane('pane_Distanciaaunalocalidadde50milhabitantes_4').style.zIndex = 404;
+        map.getPane('pane_Distanciaaunalocalidadde50milhabitantes_4').style['mix-blend-mode'] = 'normal';
+        var layer_Distanciaaunalocalidadde50milhabitantes_4 = new L.geoJson(json_Distanciaaunalocalidadde50milhabitantes_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Distanciaaunalocalidadde50milhabitantes_4',
+            layerName: 'layer_Distanciaaunalocalidadde50milhabitantes_4',
+            pane: 'pane_Distanciaaunalocalidadde50milhabitantes_4',
+            onEachFeature: pop_Distanciaaunalocalidadde50milhabitantes_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Distanciaaunalocalidadde50milhabitantes_4_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Distanciaaunalocalidadde50milhabitantes_4);
+        map.addLayer(layer_Distanciaaunalocalidadde50milhabitantes_4);
+        function pop_Localidadesconmsde50milhabitantes_5(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Nombre de la entidad</strong><br />' + (feature.properties['NOM_ENT'] !== null ? autolinker.link(feature.properties['NOM_ENT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Nombre del municipio</strong><br />' + (feature.properties['NOM_MUN'] !== null ? autolinker.link(feature.properties['NOM_MUN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Nombre de la localidad</strong><br />' + (feature.properties['NOM_LOC'] !== null ? autolinker.link(feature.properties['NOM_LOC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Población x localidad</strong><br />' + (feature.properties['POBTOT'] !== null ? autolinker.link(feature.properties['POBTOT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Localidadesconmsde50milhabitantes_5_0() {
+            return {
+                pane: 'pane_Localidadesconmsde50milhabitantes_5',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,0,0,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Localidadesconmsde50milhabitantes_5');
+        map.getPane('pane_Localidadesconmsde50milhabitantes_5').style.zIndex = 405;
+        map.getPane('pane_Localidadesconmsde50milhabitantes_5').style['mix-blend-mode'] = 'normal';
+        var layer_Localidadesconmsde50milhabitantes_5 = new L.geoJson(json_Localidadesconmsde50milhabitantes_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Localidadesconmsde50milhabitantes_5',
+            layerName: 'layer_Localidadesconmsde50milhabitantes_5',
+            pane: 'pane_Localidadesconmsde50milhabitantes_5',
+            onEachFeature: pop_Localidadesconmsde50milhabitantes_5,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Localidadesconmsde50milhabitantes_5_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Localidadesconmsde50milhabitantes_5);
+        map.addLayer(layer_Localidadesconmsde50milhabitantes_5);
+        function pop_Limiteestatal_6(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Clave Geográfica</strong><br />' + (feature.properties['CVEGEO'] !== null ? autolinker.link(feature.properties['CVEGEO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Limiteestatal_6_0() {
+            return {
+                pane: 'pane_Limiteestatal_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_Limiteestatal_6');
+        map.getPane('pane_Limiteestatal_6').style.zIndex = 406;
+        map.getPane('pane_Limiteestatal_6').style['mix-blend-mode'] = 'normal';
+        var layer_Limiteestatal_6 = new L.geoJson(json_Limiteestatal_6, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_Limiteestatal_6',
+            layerName: 'layer_Limiteestatal_6',
+            pane: 'pane_Limiteestatal_6',
+            onEachFeature: pop_Limiteestatal_6,
+            style: style_Limiteestatal_6_0,
+        });
+        bounds_group.addLayer(layer_Limiteestatal_6);
+        map.addLayer(layer_Limiteestatal_6);
+            var title = new L.Control();
+            title.onAdd = function (map) {
+                this._div = L.DomUtil.create('div', 'info');
+                this.update();
+                return this._div;
+            };
+            title.update = function () {
+                this._div.innerHTML = '<h2><h1>Micro-empresas, pequeñas y medianas empresas </h1></h2>';
+            };
+            title.addTo(map);
+            var abstract = new L.Control({'position':'bottomleft'});
+            abstract.onAdd = function (map) {
+                this._div = L.DomUtil.create('div',
+                'leaflet-control abstract');
+                this._div.id = 'abstract'
+
+                    abstract.show();
+                    return this._div;
+                };
+                abstract.show = function () {
+                    this._div.classList.remove("abstract");
+                    this._div.classList.add("abstractUncollapsed");
+                    this._div.innerHTML = '<img src="https://www.territorioybienestar.mx/wp-content/uploads/2021/02/image-e1613519476373.png" /></img><img src="https://www.territorioybienestar.mx/wp-content/uploads/2021/02/Logo-territorio-y-bienestar2-e1613488386231.jpg" /></img>';
+            };
+            abstract.addTo(map);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/Limiteestatal_6.png" /> Limite estatal': layer_Limiteestatal_6,'<img src="legend/Localidadesconmsde50milhabitantes_5.png" /> Localidades con más de 50 mil habitantes': layer_Localidadesconmsde50milhabitantes_5,'Distancia a una localidad de 50 mil habitantes<br /><table><tr><td style="text-align: center;"><img src="legend/Distanciaaunalocalidadde50milhabitantes_4_1630670.png" /></td><td>16 - 3067</td></tr><tr><td style="text-align: center;"><img src="legend/Distanciaaunalocalidadde50milhabitantes_4_306758931.png" /></td><td>3067 - 5893</td></tr><tr><td style="text-align: center;"><img src="legend/Distanciaaunalocalidadde50milhabitantes_4_5893137042.png" /></td><td>5893 - 13704</td></tr><tr><td style="text-align: center;"><img src="legend/Distanciaaunalocalidadde50milhabitantes_4_13704404573.png" /></td><td>13704 - 40457</td></tr><tr><td style="text-align: center;"><img src="legend/Distanciaaunalocalidadde50milhabitantes_4_404573962674.png" /></td><td>40457 - 396267</td></tr></table>': layer_Distanciaaunalocalidadde50milhabitantes_4,'Acceso a Internet / Densidad de micro-empresas<br /><table><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_10.png" /></td><td>1</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_AccesobajoainternetAusenciademicroempresas1.png" /></td><td>Acceso bajo a internet / Ausencia  de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_AccesobajomedioainternetAusenciademicroempresas2.png" /></td><td>Acceso bajo-medio a internet / Ausencia de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_AccesomedioainternetAusenciademicroempresas3.png" /></td><td>Acceso medio a internet / Ausencia de microempresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_AccesomedioaltoainternetAusenciademicroempresas4.png" /></td><td>Acceso medio-alto a internet / Ausencia de microempresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_AccesoaltoainternetAusenciademicroempresas5.png" /></td><td>Acceso alto a internet / Ausencia de microempresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_Accesobajoainternetdensidadbajamediademicroempresas6.png" /></td><td>Acceso bajo a internet / densidad baja-media  de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_Accesobajomedioainternetdensidadbajamediademicroempresas7.png" /></td><td>Acceso bajo-medio a internet / densidad baja-media  de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_Accesomedioainternetdensidadbajamediademicroempresas8.png" /></td><td>Acceso medio a internet / densidad baja-media  de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_Accesomedioaltoainternetdensidadbajamediademicroempresas9.png" /></td><td>Acceso medio-alto a internet / densidad baja-media  de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_Accesoaltoainternetdensidadbajamediademicroempresas10.png" /></td><td>Acceso alto a internet / densidad baja-media  de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_Accesobajoainternetdensidadmediademicroempresas11.png" /></td><td>Acceso bajo a internet / densidad media de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_Accesobajomedioainternetdensidadmediademicroempresas12.png" /></td><td>Acceso bajo-medio a internet / densidad media de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_Accesomedioainternetdensidadmediademicroempresas13.png" /></td><td>Acceso medio a internet / densidad media de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_Accesomedioaltoainternetdensidadmediademicroempresas14.png" /></td><td>Acceso medio-alto a internet / densidad media de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_Accesoaltoainternetdensidadmediademicroempresas15.png" /></td><td>Acceso alto a internet / densidad media de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_Accesobajoainternetdensidadmediaaltademicroempresas16.png" /></td><td>Acceso bajo a internet / densidad media-alta de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_Accesobajomedioainternetdensidadmediaaltademicroempresas17.png" /></td><td>Acceso bajo-medio a internet / densidad media-alta de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_Accesomedioainternetdensidadmediaaltademicroempresas18.png" /></td><td>Acceso medio a internet / densidad media-alta de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_Accesomedioaltoainternetdensidadmediaaltademicroempresas19.png" /></td><td>Acceso medio-alto a internet / densidad media-alta de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_Accesoaltoainternetdensidadmediaaltademicroempresas20.png" /></td><td>Acceso alto a internet / densidad media-alta de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_AccesobajoainternetdensidadAltademicroempresas21.png" /></td><td>Acceso bajo a internet / densidad Alta de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_AccesobajomedioainternetdensidadAltademicroempresas22.png" /></td><td>Acceso bajo-medio a internet / densidad Alta de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_AccesomedioainternetdensidadAltademicroempresas23.png" /></td><td>Acceso medio a internet / densidad Alta de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_AccesomedioaltoainternetdensidadAltademicroempresas24.png" /></td><td>Acceso medio-alto a internet / densidad Alta de micro-empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemicroempresas_3_AccesoaltoainternetdensidadAltademicroempresas25.png" /></td><td>Acceso alto a internet / densidad Alta de micro-empresas</td></tr></table>': layer_AccesoaInternetDensidaddemicroempresas_3,'Acceso a Internet / Densidad de pequeñas empresas<br /><table><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_10.png" /></td><td>1</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_AccesobajoainternetAusenciadepequeñasempresas1.png" /></td><td>Acceso bajo a internet /  Ausencia de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_AccesobajomedioainternetAusenciadepequeñasempresas2.png" /></td><td>Acceso bajo-medio a internet / Ausencia de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_AccesomedioainternetAusenciadepequeñasempresas3.png" /></td><td>Acceso medio a internet / Ausencia de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_AccesomedioaltoainternetAusenciadepequeñasempresas4.png" /></td><td>Acceso medio-alto a internet / Ausencia de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_AccesoaltoainternetAusenciadepequeñasempresas5.png" /></td><td>Acceso alto a internet / Ausencia de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_Accesobajoainternetdensidadbajamediadepequeñasempresas6.png" /></td><td>Acceso bajo a internet / densidad baja-media  de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_Accesobajomedioainternetdensidadbajamediadepequeñasempresas7.png" /></td><td>Acceso bajo-medio a internet / densidad baja-media  de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_Accesomedioainternetdensidadbajamediadepequeñasempresas8.png" /></td><td>Acceso medio a internet / densidad baja-media  de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_Accesomedioaltoainternetdensidadbajamediadepequeñasempresas9.png" /></td><td>Acceso medio-alto a internet / densidad baja-media  de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_Accesoaltoainternetdensidadbajamediadepequeñasempresas10.png" /></td><td>Acceso alto a internet / densidad baja-media  de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_Accesobajoainternetdensidadmediadepequeñasempresas11.png" /></td><td>Acceso bajo a internet / densidad media de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_Accesobajomedioainternetdensidadmediadepequeñasempresas12.png" /></td><td>Acceso bajo-medio a internet / densidad media de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_Accesomedioainternetdensidadmediadepequeñasempresas13.png" /></td><td>Acceso medio a internet / densidad media de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_Accesomedioaltoainternetdensidadmediadepequeñasempresas14.png" /></td><td>Acceso medio-alto a internet / densidad media de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_Accesoaltoainternetdensidadmediadepequeñasempresas15.png" /></td><td>Acceso alto a internet / densidad media de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_Accesobajoainternetdensidadmediaaltadepequeñasempresas16.png" /></td><td>Acceso bajo a internet / densidad media-alta de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_Accesobajomedioainternetdensidadmediaaltadepequeñasempresas17.png" /></td><td>Acceso bajo-medio a internet / densidad media-alta de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_Accesomedioainternetdensidadmediaaltadepequeñasempresas18.png" /></td><td>Acceso medio a internet / densidad media-alta de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_Accesomedioaltoainternetdensidadmediaaltadepequeñasempresas19.png" /></td><td>Acceso medio-alto a internet / densidad media-alta de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_Accesoaltoainternetdensidadmediaaltadepequeñasempresas20.png" /></td><td>Acceso alto a internet / densidad media-alta de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_AccesobajoainternetdensidadAltadepequeñasempresas21.png" /></td><td>Acceso bajo a internet / densidad Alta de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_AccesobajomedioainternetdensidadAltadepequeñasempresas22.png" /></td><td>Acceso bajo-medio a internet / densidad Alta de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_AccesomedioainternetdensidadAltadepequeñasempresas23.png" /></td><td>Acceso medio a internet / densidad Alta de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_AccesomedioaltoainternetdensidadAltadepequeñasempresas24.png" /></td><td>Acceso medio-alto a internet / densidad Alta de pequeñas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddepequeasempresas_2_AccesoaltoainternetdensidadAltadepequeñasempresas25.png" /></td><td>Acceso alto a internet / densidad Alta de pequeñas empresas</td></tr></table>': layer_AccesoaInternetDensidaddepequeasempresas_2,'Acceso a Internet / Densidad de medianas empresas<br /><table><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_10.png" /></td><td>1</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_AccesobajoainternetAusenciademedianasempresas1.png" /></td><td>Acceso bajo a internet / Ausencia de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_AccesobajomedioainternetAusenciademedianasempresas2.png" /></td><td>Acceso bajo-medio a internet / Ausencia de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_AccesomedioainternetAusenciademedianasempresas3.png" /></td><td>Acceso medio a internet / Ausencia de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_AccesomedioaltoainternetAusenciademedianasempresas4.png" /></td><td>Acceso medio-alto a internet / Ausencia de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_AccesoaltoainternetAusenciademedianasempresas5.png" /></td><td>Acceso alto a internet / Ausencia de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_Accesobajoainternetdensidadbajamediademedianasempresas6.png" /></td><td>Acceso bajo a internet / densidad baja-media  de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_Accesobajomedioainternetdensidadbajamediademedianasempresas7.png" /></td><td>Acceso bajo-medio a internet / densidad baja-media  de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_Accesomedioainternetdensidadbajamediademedianasempresas8.png" /></td><td>Acceso medio a internet / densidad baja-media  de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_Accesomedioaltoainternetdensidadbajamediademedianasempresas9.png" /></td><td>Acceso medio-alto a internet / densidad baja-media  de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_Accesoaltoainternetdensidadbajamediademedianasempresas10.png" /></td><td>Acceso alto a internet / densidad baja-media  de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_Accesobajoainternetdensidadmediademedianasempresas11.png" /></td><td>Acceso bajo a internet / densidad media de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_Accesobajomedioainternetdensidadmediademedianasempresas12.png" /></td><td>Acceso bajo-medio a internet / densidad media de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_Accesomedioainternetdensidadmediademedianasempresas13.png" /></td><td>Acceso medio a internet / densidad media de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_Accesomedioaltoainternetdensidadmediademedianasempresas14.png" /></td><td>Acceso medio-alto a internet / densidad media de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_Accesoaltoainternetdensidadmediademedianasempresas15.png" /></td><td>Acceso alto a internet / densidad media de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_Accesobajoainternetdensidadmediaaltademedianasempresas16.png" /></td><td>Acceso bajo a internet / densidad media-alta de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_Accesobajomedioainternetdensidadmediaaltademedianasempresas17.png" /></td><td>Acceso bajo-medio a internet / densidad media-alta de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_Accesomedioainternetdensidadmediaaltademedianasempresas18.png" /></td><td>Acceso medio a internet / densidad media-alta de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_Accesomedioaltoainternetdensidadmediaaltademedianasempresas19.png" /></td><td>Acceso medio-alto a internet / densidad media-alta de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_Accesoaltoainternetdensidadmediaaltademedianasempresas20.png" /></td><td>Acceso alto a internet / densidad media-alta de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_AccesobajoainternetdensidadAltademedianasempresas21.png" /></td><td>Acceso bajo a internet / densidad Alta de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_AccesobajomedioainternetdensidadAltademedianasempresas22.png" /></td><td>Acceso bajo-medio a internet / densidad Alta de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_AccesomedioainternetdensidadAltademedianasempresas23.png" /></td><td>Acceso medio a internet / densidad Alta de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_AccesomedioaltoainternetdensidadAltademedianasempresas24.png" /></td><td>Acceso medio-alto a internet / densidad Alta de medianas empresas</td></tr><tr><td style="text-align: center;"><img src="legend/AccesoaInternetDensidaddemedianasempresas_1_AccesoaltoainternetdensidadAltademedianasempresas25.png" /></td><td>Acceso alto a internet / densidad Alta de medianas empresas</td></tr></table>': layer_AccesoaInternetDensidaddemedianasempresas_1,"Voyager [no labels] (retina)": layer_Voyagernolabelsretina_0,}).addTo(map);
+        setBounds();
+        </script>
+    </body>
+</html>
